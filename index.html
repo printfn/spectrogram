@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>Spectrogram</title>
+<script src="chroma.min.js"></script>
+<script src="script.js"></script>
+<style>
+
+#spectrogramCanvas {
+    width: 100%;
+}
+
+</style>
+</head>
+<body>
+
+<div>
+<canvas id="spectrogramCanvas" height="768" width="2048"></canvas>
+</div>
+
+<div>
+<input type="button" value=">" id="pauseButton">
+<input id="volume" type="range" min="0" max="1" step="0.01" value="0.5">
+</div>
+
+</body>
+</html>
