@@ -1,7 +1,7 @@
 let paused = true;
 let ctx = null;
 let canvas = null;
-const spectrogramScale = chroma.scale(['black','red','yellow','white']).correctLightness();
+const spectrogramScale = chroma.scale(['black','purple','red','yellow','white']).correctLightness();
 
 async function togglePause() {
     if (paused) {
