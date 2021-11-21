@@ -42,7 +42,6 @@ async function processStream(stream) {
     gainNode.connect(audioContext.destination);
 
     let microphoneStream = audioContext.createMediaStreamSource(stream);
-    microphoneStream.connect(gainNode);
 
     let scriptProcessorNode = audioContext.createScriptProcessor(BUFF_SIZE, 1, 1);
     scriptProcessorNode.onaudioprocess = processMicrophoneBuffer;
