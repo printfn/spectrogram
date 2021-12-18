@@ -9,6 +9,21 @@
     width: 100%;
 }
 
+#pitch-table {
+    font-family: Arial Unicode MS, Lucida Sans Unicode;
+    border-collapse: collapse;
+}
+
+#pitch-table td {
+    border: 1px solid #999;
+    padding: 3px;
+    background-color: #ffd;
+}
+
+.right {
+    float: right;
+}
+
 </style>
 </head>
 <body>
@@ -20,6 +35,10 @@
 <div>
 <input type="button" value=">" id="pauseButton">
 <input id="volume" type="range" min="0" max="1" step="0.01" value="0.5">
+</div>
+
+<div>
+<table id="pitch-table"></table>
 </div>
 
 </body>

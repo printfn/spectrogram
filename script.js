@@ -95,6 +95,7 @@ function spectrogramTick(array) {
 }
 
 window.onload = () => {
+    setupPitchTable();
     document.getElementById('pauseButton').addEventListener('click', togglePause);
 
     canvas = document.getElementById('spectrogramCanvas');
@@ -106,3 +107,32 @@ window.onload = () => {
 // function onTick() {
 //     window.requestAnimationFrame(onTick);
 // }
+
+function setupPitchTable() {
+    let table = '';
+    for (let i = 0; i < 12; ++i) {
+        table += '<tr>';
+        for (let j = 0; j < 9; ++j) {
+            let note = '';
+            switch (i) {
+                case 0: note = 'C'; break;
+                case 1: note = 'C\u266F'; break; // flat would be \u266D
+                case 2: note = 'D'; break;
+                case 3: note = 'D\u266F'; break;
+                case 4: note = 'E'; break;
+                case 5: note = 'F'; break;
+                case 6: note = 'F\u266F'; break;
+                case 7: note = 'G'; break;
+                case 8: note = 'G\u266F'; break;
+                case 9: note = 'A'; break;
+                case 10: note = 'B\u266F'; break;
+                case 11: note = 'B'; break;
+            }
+            let pitch = 440 * Math.pow(2, (j - 5) + (i + 3) / 12);
+            let pitchString = pitch.toFixed(2);
+            table += `<td>${note}<sub>${j}</sub>:&nbsp;<span class="right">${pitchString}</span></td>`;
+        }
+        table += '</tr>';
+    }
+    document.getElementById('pitch-table').innerHTML = table;
+}
