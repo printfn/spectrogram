@@ -1,18 +1,22 @@
 let paused = true;
 let ctx = null;
 let canvas = null;
+//const audioContext = new AudioContext();
 const spectrogramScale = chroma.scale(['black','purple','red','yellow','white']).correctLightness();
 
 async function togglePause() {
     if (paused) {
         paused = false;
-        document.getElementById('pauseButton').value = '||';
+        document.getElementById('pauseButton').value = 'Stop Spectrogram';
         // start spectrogram
         await getMicrophone();
     } else {
         paused = true;
-        document.getElementById('pauseButton').value = '>';
+        document.getElementById('pauseButton').value = 'Start Spectrogram';
         // stop spectrogram
+        if (window.spectrogramAudioCtx) {
+            await window.spectrogramAudioCtx.close();
+        }
     }
 }
 
@@ -36,8 +40,9 @@ function processMicrophoneBuffer(event) {
 
 async function processStream(stream) {
     const BUFF_SIZE = 16384;
-
     let audioContext = new AudioContext();
+    window.spectrogramAudioCtx = audioContext;
+
     let gainNode = audioContext.createGain();
     gainNode.connect(audioContext.destination);
 
@@ -108,11 +113,40 @@ window.onload = () => {
 //     window.requestAnimationFrame(onTick);
 // }
 
+function beep(duration, frequency, callback) {
+    let audioContext = new AudioContext();
+    let oscillator = audioContext.createOscillator();
+    let gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    gainNode.gain.value = 1;
+    if (frequency){oscillator.frequency.value = frequency;}
+    oscillator.type = 'sine';
+    if (callback) {
+        oscillator.onended = async () => {
+            await audioContext.close();
+            callback();
+        };
+    }
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + duration / 1000);
+};
+
+function beepHandler(elem, pitch) {
+    elem.style.backgroundColor = '#dfd';
+    beep(1000, pitch, () => {
+        elem.style.backgroundColor = '';
+    });
+}
+
 function setupPitchTable() {
     let table = '';
     for (let i = 0; i < 12; ++i) {
         table += '<tr>';
-        for (let j = 0; j < 9; ++j) {
+        for (let j = 0; j < 11; ++j) {
             let note = '';
             switch (i) {
                 case 0: note = 'C'; break;
@@ -130,7 +164,13 @@ function setupPitchTable() {
             }
             let pitch = 440 * Math.pow(2, (j - 5) + (i + 3) / 12);
             let pitchString = pitch.toFixed(2);
-            table += `<td>${note}<sub>${j}</sub>:&nbsp;<span class="right">${pitchString}</span></td>`;
+            if (pitch > 20000) {
+                //table += '<td></td>';
+            } else {
+                table += `<td onclick="beepHandler(this, ${pitch})">`;
+                table += `${note}<sub>${j}</sub>:&nbsp;<span class="right">${pitchString}</span>`;
+                table += '</td>';
+            }
         }
         table += '</tr>';
     }
